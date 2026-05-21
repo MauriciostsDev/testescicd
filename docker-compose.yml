@@ -1,0 +1,34 @@
+services:
+  mysql:
+    image: mysql:8.1
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: lojacarros_test
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+    ports:
+      - 3306:3306
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  app:
+    image: maven:3.9.11-eclipse-temurin-17
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app
+      - m2_repo:/root/.m2
+    environment:
+      MYSQL_HOST: mysql
+    depends_on:
+      mysql:
+        condition: service_healthy
+    command: bash -lc "chmod +x ./mvnw && ./mvnw -B test jacoco:report"
+
+volumes:
+  mysql_data:
+  m2_repo:

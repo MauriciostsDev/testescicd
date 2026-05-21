@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -47,6 +48,16 @@ class CarroControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(carroJson))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void atualizarCarroInexistente_deveRetornarNotFound() throws Exception {
+        String carroJson = "{\"modelo\":\"Civic\",\"ano\":2021,\"preco\":75000.00}";
+
+        mockMvc.perform(put("/carro/{id}", 999)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(carroJson))
+                .andExpect(status().isNotFound());
     }
 
     @Test

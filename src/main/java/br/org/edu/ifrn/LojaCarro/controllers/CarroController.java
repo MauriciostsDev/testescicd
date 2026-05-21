@@ -28,6 +28,9 @@ public class CarroController {
     // Atualizar carro (por ID)
     @PutMapping("/{id}")
     public ResponseEntity<Carro> atualizarCarro(@PathVariable Long id, @RequestBody @Valid Carro c) {
+        if (carroService.findById(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         c.setId(id);  // Define o ID no objeto
         Carro updatedCarro = carroService.update(c);
         return ResponseEntity.ok(updatedCarro);
